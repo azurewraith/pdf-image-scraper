@@ -4,6 +4,8 @@ require 'fileutils'
 
 pdf_file_name = ARGV.shift
 
+abort 'Usage: `pdf-image-scraper.rb <pdf_file>`' if pdf_file_name.to_s.empty?
+
 output = `pdfimages -all -list #{pdf_file_name}`
 
 lines = output.split("\n")
@@ -52,5 +54,4 @@ images.each do |filename|
 end
 
 Dir.mkdir('output') unless Dir.exists?('output')
-FileUtils.mv Dir.glob('*.png'), 'output/'
-FileUtils.mv Dir.glob('*.jpg'), 'output/'
+FileUtils.mv Dir.glob('{image,unified}*.{jpg,png}'), 'output/'
