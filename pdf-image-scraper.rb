@@ -4,6 +4,8 @@ require 'fileutils'
 
 pdf_file_name = ARGV.shift
 
+abort 'Usage: `pdf-image-scraper.rb <pdf_file>`' if pdf_file_name.to_s.empty?
+
 output = `pdfimages -all -list #{pdf_file_name}`
 
 lines = output.split("\n")
@@ -17,7 +19,7 @@ lines.each_with_index do |l,i|
         image_number = l[2].to_i
         extension = l[9].eql?("image") ? "png" : "jpg"
         images[image_number] = {filename: "image-#{image_number.to_s.rjust(3, "0")}.#{extension}"}
-        if lines[i+1][3] =~ /smask/
+        if !lines[i+1].nil? && lines[i+1][3] =~ /smask/
             mask_number = lines[i+1][2].to_i
             mask_extension = lines[i+1][9].eql?("image") ? "png" : "jpg"
             images[image_number].merge!({mask: "image-#{mask_number.to_s.rjust(3, "0")}.#{mask_extension}"})
@@ -38,7 +40,7 @@ images.each_pair do |num, info|
     #puts num, info
 end
 
-images = Dir.glob("*.jpg") + Dir.glob("*.png")
+images = Dir.glob('{image,unified}*.{jpg,png}')
 image_hashes = {}
 
 images.each do |filename|
@@ -52,5 +54,4 @@ images.each do |filename|
 end
 
 Dir.mkdir('output') unless Dir.exists?('output')
-FileUtils.mv Dir.glob('*.png'), 'output/'
-FileUtils.mv Dir.glob('*.jpg'), 'output/'
+FileUtils.mv Dir.glob('{image,unified}*.{jpg,png}'), 'output/'
