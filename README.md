@@ -3,6 +3,7 @@
 ## Prerequisites
 
 * poppler / xpdf
+* ImageMagick
 
 ## Usage
 
